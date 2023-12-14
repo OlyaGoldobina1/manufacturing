@@ -9,7 +9,6 @@ import pg
 import notification
 
 cnc_data = [os.environ['cnc_api_3'], os.environ['cnc_api_5']]
-api_data = os.environ['api_data']
 
 def param_val_to_float(val: str) -> float:
     val = str(val)

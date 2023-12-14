@@ -8,7 +8,7 @@ from time import sleep
 
 
 client = Client(os.environ['opc_server'])
-nodes = []
+node_list = os.environ['api_data']
 
 def get_opc_data(node_list: List[srt]) -> pd.DataFrame:
     client.connect()

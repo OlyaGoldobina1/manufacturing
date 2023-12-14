@@ -4,6 +4,7 @@ from datetime import datetime
 import os
 
 cnc_data = [os.environ['cnc_api_3'], os.environ['cnc_api_5']]
+api_data = os.environ['api_data']
 
 
 def read_cnc_api_data(api_data: dict) -> pd.DataFrame:
@@ -36,5 +37,5 @@ def get_api_data(cnc_data: List[str], table: str) -> pd.DataFrame:
         df_add = read_cnc_api_data(json_data)
         df_add.insert(0, "URL", url[-1])
         df = pd.concat([df,df_add ], ignore_index=True, sort=False).drop_duplicates()
-        db.insert_table(df, 'cnc', login=os.environ['db_login'])
+        db.insert_table(df, table, login=os.environ['db_login'])
     return df

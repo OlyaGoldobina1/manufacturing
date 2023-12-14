@@ -4,7 +4,7 @@ import requests
 
 
 TOKEN = os.environ['TOKEN']
-bot = telebot.TeleBot(TOKEN);
+bot = telebot.TeleBot(TOKEN)
 
 
 def send_message(chat_id: int, text: str) -> None:

@@ -1,13 +1,15 @@
 import paho.mqtt.client as mqtt
 import datetime
 import pandas
+import pg
+import pandas as pd
+import os
 
 
 def on_message(client, userdata, msg):
     mqtt_data = {"topic": msg.topic[-1], "value": msg.payload.decode(), "timestamp": datetime.now()}
     df = pd.DataFrame(mqtt_data)
-    db.insert_table(df, 'mqtt', login=os.environ['db_login'])
-    print(float(msg.payload.decode()), msg.topic[-1])
+    pg.insert_table(df, 'mqtt', login=os.environ['db_login'])
 
 
 def init_mqtt():
@@ -23,5 +25,6 @@ def mqtt_loop(client):
     client.loop_forever()
 
 
-mqtt_client = init_mqtt()
-mqtt_loop(mqtt_client)
+def start_mqtt():
+    mqtt_client = init_mqtt()
+    mqtt_loop(mqtt_client)

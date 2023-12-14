@@ -4,7 +4,6 @@ from datetime import datetime
 import os
 
 cnc_data = [os.environ['cnc_api_3'], os.environ['cnc_api_5']]
-api_data = os.environ['api_data']
 
 
 def read_cnc_api_data(api_data: dict) -> pd.DataFrame:

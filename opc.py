@@ -35,6 +35,6 @@ def start_opc():
     while True:
         sleep(5)
         try:
-            write_opc_data(nodes)
+            write_opc_data(node_list)
         except Exception as e:
             print('Mistake on cnc')

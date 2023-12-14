@@ -15,8 +15,14 @@ bot = telebot.TeleBot(TOKEN)
 login_str = os.environ['db_login']
 login = json.loads(os.environ['db_login'])
 
+def start_cnc_2():
+   global thread_cnc_list
+   global thread_cnc
+   start_cnc(thread_cnc_list)
 
-thread_cnc = Thread(target=start_cnc)
+thread_cnc_list = []
+thread_cnc = Thread(target=start_cnc_2)
+
 thread_cnc.start()
 thread_mqtt = Thread(target=start_mqtt)
 thread_mqtt.start()
@@ -37,12 +43,14 @@ def sign_handler(message):
 @bot.message_handler(commands=['cnc-start'])
 def sign_handler1(message):
     global thread_cnc
+    global thread_cnc_list
     usrids = pg.query_to_df('select chat_id from users', login=login)
     usrids.drop_duplicates()
-    smthng = usrids[usrids.columns[0]].values.tolist()
-    if message.chat.id in smthng:
+    usrids = usrids[usrids.columns[0]].values.tolist()
+    if message.chat.id in usrids:
       if(thread_cnc == 1):
-          thread_cnc = Thread(target=start_cnc)
+          thread_cnc = Thread(target=start_cnc_2)
+          thread_cnc_list=[]
           thread_cnc.start()
           bot.send_message(message.chat.id, 'Сборщик успешно запущен', parse_mode="Markdown")
       else:
@@ -53,13 +61,18 @@ def sign_handler1(message):
 @bot.message_handler(commands=['cnc-stop'])
 def sign_handler2(message):
     global thread_cnc
+    global thread_cnc_list
     usrids = pg.query_to_df('select chat_id from users', login=login)
     usrids.drop_duplicates()
+    usrids = usrids[usrids.columns[0]].values.tolist()
     if message.chat.id in usrids:
         try:
           if(thread_cnc != 1):
-            thread_cnc.stop()
+            l_thread = thread_cnc
+            thread_cnc_list.append("Very special string")
             bot.send_message(message.chat.id, 'Сборщик успешно попущен', parse_mode="Markdown")
+            l_thread.join()
+
             thread_cnc = 1
           else:
             bot.send_message(message.chat.id, 'Нет запущенных сборщиков', parse_mode="Markdown") 
@@ -72,6 +85,7 @@ def sign_handler3(message):
     global start_mqtt
     usrids = pg.query_to_df('select chat_id from users', login=login)
     usrids.drop_duplicates()
+    usrids = usrids[usrids.columns[0]].values.tolist()
     if message.chat.id in usrids:
       global thread_mqtt
 
@@ -87,6 +101,7 @@ def sign_handler4(message):
     global start_mqtt
     usrids = pg.query_to_df('select chat_id from users', login=login)
     usrids.drop_duplicates()
+    usrids = usrids[usrids.columns[0]].values.tolist()
     if message.chat.id in usrids:
         try:
           if(thread_mqtt != 1):
@@ -103,6 +118,7 @@ def sign_handler5(message):
     global thread_opc
     usrids = pg.query_to_df('select chat_id from users', login=login)
     usrids.drop_duplicates()
+    usrids = usrids[usrids.columns[0]].values.tolist()
     if message.chat.id in usrids:
       global thread_opc
       if(thread_opc == 1):
@@ -117,6 +133,7 @@ def sign_handler6(message):
     global thread_opc
     usrids = pg.query_to_df('select chat_id from users', login=login)
     usrids.drop_duplicates()
+    usrids = usrids[usrids.columns[0]].values.tolist()
     if message.chat.id in usrids:
         try:
           if(thread_opc != 1):

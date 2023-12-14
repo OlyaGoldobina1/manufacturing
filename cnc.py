@@ -62,6 +62,7 @@ def get_api_data(table):
         df_add = read_cnc_api_data(json_data, url)
         if(df_add.size == 0):
             continue
+
         # if(len(prev.columns) == 0 or prev.compare(df_add.drop(['timestamp'], axis=1)) is not None):
         #     prev = df_add.drop(['timestamp'], axis=1)
         # else:
@@ -74,12 +75,15 @@ def get_api_data(table):
         pg.insert_table(df, table, login=login)
     return df
 
-def start_cnc():
+def start_cnc(list):
     sent = False
     while True:
         sleep(1)
         try:
             df = get_api_data('public.cnc')
+ 
+            if(len(list) > 0):
+                break
             if(df.size == 0):
                 continue
             row = df[df['param_name'] == 'Статус канала'].iloc[0]

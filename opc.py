@@ -9,7 +9,8 @@ import json
 
 
 client = Client(os.environ['opc_server'])
-node_list = os.environ['api_data']
+ape_data = os.environ['api_data']
+node_list = eval(os.environ['api_data'])
 login = json.loads(os.environ['db_login'])
 prev = ''
 
@@ -32,12 +33,13 @@ def get_opc_data(node_list):
 
 def write_opc_data(node_list):
     nodes_df = get_opc_data(node_list)
-    pg.insert_table(nodes_df, 'cnc', login=login)
+    pg.insert_table(nodes_df, 'opc', login=login)
 
 def start_opc():
     while True:
-        sleep(5)
+        sleep(10)
         try:
             write_opc_data(node_list)
         except Exception as e:
-            print('Mistake on cnc')
+            print(e)
+            print('Mistake on opc')

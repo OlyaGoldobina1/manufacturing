@@ -8,8 +8,8 @@ import pandas as pd
 import pg
 import notification
 
-cnc_data = [os.environ['cnc_api_3'], os.environ['cnc_api_5']]
-login = json.loads(os.environ['db_login'])
+cnc_data = ['https://cnc.kovalev.team/get/3', 'https://cnc.kovalev.team/get/5']
+login = '{"dbname": "postgres","user": "postgres","password": "posrgres","host": "212.233.99.38","port": "5432","client_encoding": "utf-8"}'
 def param_val_to_float(val):
     val = str(val)
     result = re.sub('[^\d,-\.]', '', val).replace(',', '.')

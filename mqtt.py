@@ -6,7 +6,7 @@ import pandas as pd
 import os
 import json
 
-login = json.loads(os.environ['db_login'])
+login = '{"dbname": "postgres","user": "postgres","password": "posrgres","host": "212.233.99.38","port": "5432","client_encoding": "utf-8"}'
 
 def on_message(client, userdata, msg, list):
     if(len(list) > 0):

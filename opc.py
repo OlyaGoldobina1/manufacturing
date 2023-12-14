@@ -8,10 +8,10 @@ from time import sleep
 import json
 
 
-client = Client(os.environ['opc_server'])
-ape_data = os.environ['api_data']
-node_list = eval(os.environ['api_data'])
-login = json.loads(os.environ['db_login'])
+client = Client(os.environ['opc.tcp://opcua.demo-this.com:51210/UA/SampleServer'])
+ape_data ='["ns=2;i=10869", "ns=2;i=10853", "ns=2;i=10849"]'
+node_list = '["ns=2;i=10869", "ns=2;i=10853", "ns=2;i=10849"]'
+login = '{"dbname": "postgres","user": "postgres","password": "posrgres","host": "212.233.99.38","port": "5432","client_encoding": "utf-8"}'
 prev = ''
 
 def get_opc_data(node_list):

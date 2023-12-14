@@ -10,9 +10,10 @@ from opc import start_opc
 import pg
 import json
 
-TOKEN = os.environ.get('TOKEN')
+os.path.expanduser('~/Documents/MY_PROJECT/.env')
+TOKEN = "6712983152:AAGLrXDOURlFTXHOs2j8TBMakXx64sfX7Ek"
 bot = telebot.TeleBot(TOKEN)
-login_str = os.environ['db_login']
+login_str = '{"dbname": "postgres","user": "postgres","password": "posrgres","host": "212.233.99.38","port": "5432","client_encoding": "utf-8"}'
 login = json.loads(os.environ['db_login'])
 
 def start_cnc_2():
@@ -45,7 +46,7 @@ thread_opc.start()
 @bot.message_handler(commands=['reg'])
 def sign_handler(message):
     global thread_cnc
-    if message.text.replace('/reg ', '') == os.environ['tg_password']:
+    if message.text.replace('/reg ', '') ==  "123":
       users_data = {"chat_id": [message.chat.id], "user_id": [message.from_user.id], "username": [message.from_user.username], "user_first_name": [message.from_user.first_name], "user_last_name": [message.from_user.last_name]}
       df = pd.DataFrame.from_dict(users_data)
       pg.insert_table(df, 'users', login=login)

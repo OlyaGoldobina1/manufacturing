@@ -35,10 +35,12 @@ def write_opc_data(node_list):
     nodes_df = get_opc_data(node_list)
     pg.insert_table(nodes_df, 'opc', login=login)
 
-def start_opc():
+def start_opc(lst):
     while True:
         sleep(10)
         try:
+            if(len(lst) > 0):
+                break
             write_opc_data(node_list)
         except Exception as e:
             print(e)

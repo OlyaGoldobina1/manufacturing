@@ -20,13 +20,26 @@ def start_cnc_2():
    global thread_cnc
    start_cnc(thread_cnc_list)
 
+def start_mqtt_2():
+    global thread_mqtt_list
+    global thread_mqtt
+    start_mqtt(thread_mqtt_list)
+
+def start_opc_2():
+   global thread_opc_list
+   global thread_opc
+   start_opc(thread_opc_list)
+
 thread_cnc_list = []
 thread_cnc = Thread(target=start_cnc_2)
-
 thread_cnc.start()
-thread_mqtt = Thread(target=start_mqtt)
+
+thread_mqtt_list = []
+thread_mqtt = Thread(target=start_mqtt_2)
 thread_mqtt.start()
-thread_opc = Thread(target=start_opc)
+
+thread_opc_list = []
+thread_opc = Thread(target=start_opc_2)
 thread_opc.start()
 
 @bot.message_handler(commands=['reg'])
@@ -82,15 +95,16 @@ def sign_handler2(message):
 
 @bot.message_handler(commands=['mqtt-start'])
 def sign_handler3(message):
-    global start_mqtt
+    global thread_mqtt_list
+    global thread_mqtt
     usrids = pg.query_to_df('select chat_id from users', login=login)
     usrids.drop_duplicates()
     usrids = usrids[usrids.columns[0]].values.tolist()
     if message.chat.id in usrids:
-      global thread_mqtt
 
       if(thread_mqtt == 1):
-          thread_mqtt = Thread(target=start_mqtt)
+          thread_mqtt_list=[]
+          thread_mqtt = Thread(target=start_mqtt_2)
           thread_mqtt.start()
           bot.send_message(message.chat.id, 'Сборщик успешно запущен', parse_mode="Markdown")
       else:
@@ -98,15 +112,19 @@ def sign_handler3(message):
 
 @bot.message_handler(commands=['mqtt-stop'])
 def sign_handler4(message):
-    global start_mqtt
+    global thread_mqtt_list
+    global thread_mqtt
     usrids = pg.query_to_df('select chat_id from users', login=login)
     usrids.drop_duplicates()
     usrids = usrids[usrids.columns[0]].values.tolist()
     if message.chat.id in usrids:
         try:
           if(thread_mqtt != 1):
-            thread_mqtt.stop()
+            l_thread = thread_mqtt
+            thread_mqtt_list.append("Very special string")
             bot.send_message(message.chat.id, 'Сборщик успешно попущен', parse_mode="Markdown")
+            l_thread.join()
+
             thread_mqtt = 1
           else:
             bot.send_message(message.chat.id, 'Нет запущенных сборщиков', parse_mode="Markdown")
@@ -116,13 +134,15 @@ def sign_handler4(message):
 @bot.message_handler(commands=['opc-start'])
 def sign_handler5(message):
     global thread_opc
+    global thread_opc_list
     usrids = pg.query_to_df('select chat_id from users', login=login)
     usrids.drop_duplicates()
     usrids = usrids[usrids.columns[0]].values.tolist()
     if message.chat.id in usrids:
       global thread_opc
       if(thread_opc == 1):
-          thread_opc = Thread(target=start_opc)
+          thread_opc_list = []
+          thread_opc = Thread(target=start_opc_2)
           thread_opc.start()
           bot.send_message(message.chat.id, 'Сборщик успешно запущен', parse_mode="Markdown")
       else:
@@ -131,14 +151,18 @@ def sign_handler5(message):
 @bot.message_handler(commands=['opc-stop'])
 def sign_handler6(message):
     global thread_opc
+    global thread_opc_list
     usrids = pg.query_to_df('select chat_id from users', login=login)
     usrids.drop_duplicates()
     usrids = usrids[usrids.columns[0]].values.tolist()
     if message.chat.id in usrids:
         try:
           if(thread_opc != 1):
-            thread_opc.stop()
+            l_thread = thread_opc
+            thread_opc_list.append("Very special string")
             bot.send_message(message.chat.id, 'Сборщик успешно попущен', parse_mode="Markdown")
+            l_thread.join()
+
             thread_opc = 1
           else:
             bot.send_message(message.chat.id, 'Нет запущенных сборщиков', parse_mode="Markdown")

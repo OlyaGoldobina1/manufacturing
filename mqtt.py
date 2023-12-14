@@ -8,7 +8,10 @@ import json
 
 login = json.loads(os.environ['db_login'])
 
-def on_message(client, userdata, msg):
+def on_message(client, userdata, msg, list):
+    if(len(list) > 0):
+        client.disconnect()
+        return
     mqtt_data = {"topic": [msg.topic[-1]], "value": [msg.payload.decode()], "timestamp": [datetime.datetime.now()]}
     df = pd.DataFrame(mqtt_data)
     pg.insert_table(df, 'mqtt', login=login)
@@ -20,13 +23,13 @@ def init_mqtt():
     client.connect('82.146.60.95', 1883, 4)
     return client
 
-def mqtt_loop(client):
+def mqtt_loop(client, list):
     client.subscribe("sens/t", qos=0)
     client.subscribe("sens/h", qos=0)
-    client.on_message = on_message
+    client.on_message = lambda client, userdata, msg : on_message(client, userdata, msg, list)
     client.loop_forever()
 
 
-def start_mqtt():
+def start_mqtt(list):
     mqtt_client = init_mqtt()
-    mqtt_loop(mqtt_client)
+    mqtt_loop(mqtt_client, list)

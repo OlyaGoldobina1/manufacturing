@@ -4,12 +4,14 @@ import pandas
 import pg
 import pandas as pd
 import os
+import json
 
+login = json.loads(os.environ['db_login'])
 
 def on_message(client, userdata, msg):
-    mqtt_data = {"topic": msg.topic[-1], "value": msg.payload.decode(), "timestamp": datetime.now()}
+    mqtt_data = {"topic": [msg.topic[-1]], "value": [msg.payload.decode()], "timestamp": [datetime.datetime.now()]}
     df = pd.DataFrame(mqtt_data)
-    pg.insert_table(df, 'mqtt', login=os.environ['db_login'])
+    pg.insert_table(df, 'mqtt', login=login)
 
 
 def init_mqtt():

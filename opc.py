@@ -5,12 +5,15 @@ import os
 import pandas as pd
 import pg
 from time import sleep
+import json
 
 
 client = Client(os.environ['opc_server'])
 node_list = os.environ['api_data']
+login = json.loads(os.environ['db_login'])
+prev = ''
 
-def get_opc_data(node_list: List[srt]) -> pd.DataFrame:
+def get_opc_data(node_list):
     client.connect()
     nodes_data = []
     for node in node_list:
@@ -27,9 +30,9 @@ def get_opc_data(node_list: List[srt]) -> pd.DataFrame:
     client.disconnect()
     return pd.DataFrame(nodes_data)
 
-def write_opc_data(node_list: List[srt]):
+def write_opc_data(node_list):
     nodes_df = get_opc_data(node_list)
-    pg.insert_table(nodes_df, 'cnc', login=os.environ['db_login'])
+    pg.insert_table(nodes_df, 'cnc', login=login)
 
 def start_opc():
     while True:

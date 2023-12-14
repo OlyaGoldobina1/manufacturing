@@ -4,7 +4,7 @@ import psycopg2.extras as extras
 import io
 
 
-def insert_table(df: pd.DataFrame, table: str, login: dict) -> None:
+def insert_table(df, table, login):
 
     conn = psycopg2.connect(**login)
     conn.autocommit = False
@@ -18,12 +18,13 @@ def insert_table(df: pd.DataFrame, table: str, login: dict) -> None:
         extras.execute_values(cursor, query, tuples)
         conn.commit()
     except(Exception, psycopg2.DatabaseError) as e:
+        print(e)
         conn.rollback()
     cursor.close()
     conn.close()
 
 
-def query_to_df(query: str, login: dict) -> pd.DataFrame:
+def query_to_df(query, login):
 
     conn = psycopg2.connect(**login)
     conn.autocommit = False

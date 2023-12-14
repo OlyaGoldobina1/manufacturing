@@ -10,13 +10,6 @@ import notification
 
 cnc_data = [os.environ['cnc_api_3'], os.environ['cnc_api_5']]
 
-def param_val_to_float(val: str) -> float:
-    val = str(val)
-    result = re.sub('[^\d,-\.]', '', val).replace(',', '.')
-    try:
-        return float(result)
-    except Exception as e:
-        return None
 
 def read_cnc_api_data(api_data: dict) -> pd.DataFrame:
     result = list()
@@ -34,7 +27,6 @@ def read_cnc_api_data(api_data: dict) -> pd.DataFrame:
                         'entity': entity,
                         'param_name': param_name,
                         'param_val_str': param_val,
-                        'param_val_float': param_val_to_float(param_val),
                         'timestamp': timestamp
                     })
     return pd.DataFrame(result)

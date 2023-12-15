@@ -42,7 +42,7 @@ thread_opc = 1
 @bot.message_handler(commands=['reg'])
 def sign_handler(message):
     global thread_cnc
-    if message.text.replace('/reg ', '') ==  "123":
+    if message.text.replace('/reg ', '') ==  os.getenv("tg_password"):
       users_data = {"chat_id": [message.chat.id], "user_id": [message.from_user.id], "username": [message.from_user.username], "user_first_name": [message.from_user.first_name], "user_last_name": [message.from_user.last_name]}
       df = pd.DataFrame.from_dict(users_data)
       pg.insert_table(df, 'users', login=login)

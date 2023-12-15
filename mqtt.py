@@ -14,7 +14,15 @@ def on_message(client, userdata, msg, list):
     if(len(list) > 0):
         client.disconnect()
         return
-    mqtt_data = {"topic": [msg.topic[-1]], "value": [msg.payload.decode()], "timestamp": [datetime.datetime.now()]}
+    mqtt_source, mqtt_value = msg.topic.split("/")
+    print(mqtt_source, mqtt_value)
+    if mqtt_source == "sens":
+        mqtt_data = {"topic": [mqtt_value[0]], "value": [msg.payload.decode()], "timestamp": [datetime.datetime.now()],\
+                     "source": "real"}
+    else:
+        if mqtt_source == "sensor":
+            mqtt_data = {"topic": [mqtt_value[0]], "value": [msg.payload.decode()], "timestamp": [datetime.datetime.now()],\
+                     "source": "demo"}
     df = pd.DataFrame(mqtt_data)
     pg.insert_table(df, 'mqtt', login=login)
 
@@ -28,6 +36,8 @@ def init_mqtt():
 def mqtt_loop(client, list):
     client.subscribe("sens/t", qos=0)
     client.subscribe("sens/h", qos=0)
+    client.subscribe("sensor/temp", qos=0)
+    client.subscribe("sensor/hump", qos=0)
     client.on_message = lambda client, userdata, msg : on_message(client, userdata, msg, list)
     client.loop_forever()
 

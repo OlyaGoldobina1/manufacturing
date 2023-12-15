@@ -29,16 +29,18 @@ def on_message(client, userdata, msg, list):
                             "source": "demo"}
             elif mqtt_value[0] == 'h' and dict_value.get('demo') is not None:
                 dict_value['demo']["hem"] = [msg.payload.decode()]
-    if dict_value['real']['hem'] is not None and dict_value['real']['temp'] is not None:
-        dict_value['real']['timestamp'] = [time]
-        df = pd.DataFrame(dict_value['real'])
-        pg.insert_table(df, 'mqtt', login=login)
-        dict_value['real'] = None
-    elif dict_value['demo']['hem'] is not None and dict_value['demo']['temp'] is not None:
-        dict_value['demo']['timestamp'] = [time]
-        df = pd.DataFrame(dict_value['demo']) 
-        pg.insert_table(df, 'mqtt', login=login)
-        dict_value['demo'] = None
+    if dict_value.get('real') is not None:
+        if dict_value['real']['hem'] is not None and dict_value['real']['temp'] is not None:
+            dict_value['real']['timestamp'] = [time]
+            df = pd.DataFrame(dict_value['real'])
+            pg.insert_table(df, 'mqtt', login=login)
+            dict_value['real'] = None
+    elif dict_value.get('demo') is not None:
+        if dict_value['demo']['hem'] is not None and dict_value['demo']['temp'] is not None:
+            dict_value['demo']['timestamp'] = [time]
+            df = pd.DataFrame(dict_value['demo']) 
+            pg.insert_table(df, 'mqtt', login=login)
+            dict_value['demo'] = None
 
 
 def init_mqtt():

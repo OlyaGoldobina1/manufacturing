@@ -15,13 +15,13 @@ def on_message(client, userdata, msg, list):
         client.disconnect()
         return
     mqtt_source, mqtt_value = msg.topic.split("/")
-    print(mqtt_source, mqtt_value)
+    time = datetime.datetime.now()
     if mqtt_source == "sens":
-        mqtt_data = {"topic": [mqtt_value[0]], "value": [msg.payload.decode()], "timestamp": [datetime.datetime.now()],\
+        mqtt_data = {"topic": [mqtt_value[0]], "value": [msg.payload.decode()], "timestamp": [time],\
                      "source": "real"}
     else:
         if mqtt_source == "sensor":
-            mqtt_data = {"topic": [mqtt_value[0]], "value": [msg.payload.decode()], "timestamp": [datetime.datetime.now()],\
+            mqtt_data = {"topic": [mqtt_value[0]], "value": [msg.payload.decode()], "timestamp": [time],\
                      "source": "demo"}
     df = pd.DataFrame(mqtt_data)
     pg.insert_table(df, 'mqtt', login=login)

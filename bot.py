@@ -55,7 +55,7 @@ def sign_handler(message):
     else:
       bot.send_message(message.chat.id, 'Пароль не корректен', parse_mode="Markdown")
 
-@bot.message_handler(commands=['cnc-start'])
+@bot.message_handler(commands=['cncstart'])
 def sign_handler1(message):
     global thread_cnc
     global thread_cnc_list
@@ -75,7 +75,7 @@ def sign_handler1(message):
 
        
 
-@bot.message_handler(commands=['cnc-stop'])
+@bot.message_handler(commands=['cncstop'])
 def sign_handler2(message):
     global thread_cnc
     global thread_cnc_list
@@ -99,7 +99,7 @@ def sign_handler2(message):
        bot.send_message(message.chat.id, 'Пользователь не авторизован', parse_mode="Markdown")
               
 
-@bot.message_handler(commands=['mqtt-start'])
+@bot.message_handler(commands=['mqttstart'])
 def sign_handler3(message):
     global thread_mqtt_list
     global thread_mqtt
@@ -118,7 +118,7 @@ def sign_handler3(message):
     else:
        bot.send_message(message.chat.id, 'Пользователь не авторизован', parse_mode="Markdown")
 
-@bot.message_handler(commands=['mqtt-stop'])
+@bot.message_handler(commands=['mqttstop'])
 def sign_handler4(message):
     global thread_mqtt_list
     global thread_mqtt
@@ -141,7 +141,7 @@ def sign_handler4(message):
     else:
        bot.send_message(message.chat.id, 'Пользователь не авторизован', parse_mode="Markdown")
         
-@bot.message_handler(commands=['opc-start'])
+@bot.message_handler(commands=['opcstart'])
 def sign_handler5(message):
     global thread_opc
     global thread_opc_list
@@ -160,7 +160,7 @@ def sign_handler5(message):
     else:
        bot.send_message(message.chat.id, 'Пользователь не авторизован', parse_mode="Markdown")
 
-@bot.message_handler(commands=['opc-stop'])
+@bot.message_handler(commands=['opcstop'])
 def sign_handler6(message):
     global thread_opc
     global thread_opc_list
@@ -184,7 +184,7 @@ def sign_handler6(message):
        bot.send_message(message.chat.id, 'Пользователь не авторизован', parse_mode="Markdown")
 
 
-@bot.message_handler(commands=['started-threads'])
+@bot.message_handler(commands=['startedthreads'])
 def sign_handler6(message):
     global thread_opc
     global thread_cnc
@@ -213,13 +213,13 @@ def sign_handler6(message):
     if message.chat.id in usrids:
        Text = 'Доступные комманды: \n'\
               '/reg [пароль] - Регистрация в боте\n'\
-              '/cnc-start - Старт cnc сборщика\n'\
-              '/cnc-stop - Остановка cnc сборщика\n'\
-              '/opc-start - Старт opc сборщика\n'\
-              '/opc-stop - Остановка opc сборщика\n'\
-              '/mqtt-start - Старт mqtt сборщика\n'\
-              '/mqtt-stop - Остановка mqtt сборщика\n'\
-              '/started-threads - Статус по сборщикам'
+              '/cncstart - Старт cnc сборщика\n'\
+              '/cncstop - Остановка cnc сборщика\n'\
+              '/opcstart - Старт opc сборщика\n'\
+              '/opcstop - Остановка opc сборщика\n'\
+              '/mqttstart - Старт mqtt сборщика\n'\
+              '/mqttstop - Остановка mqtt сборщика\n'\
+              '/startedthreads - Статус по сборщикам'
        bot.send_message(message.chat.id, Text, parse_mode="Markdown")
     else:
        Text = 'Доступные комманды: \n'\

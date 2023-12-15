@@ -81,7 +81,7 @@ def get_api_data(table):
 def start_cnc(list):
     sent = False
     while True:
-        sleep(1)
+        sleep(10)
         try:
             df = get_api_data('public.cnc')
  

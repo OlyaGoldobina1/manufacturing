@@ -44,11 +44,16 @@ def sign_handler(message):
     global thread_cnc
     if message.text.replace('/reg ', '') ==  os.getenv("tg_password"):
       users_data = {"chat_id": [message.chat.id], "user_id": [message.from_user.id], "username": [message.from_user.username], "user_first_name": [message.from_user.first_name], "user_last_name": [message.from_user.last_name]}
-      df = pd.DataFrame.from_dict(users_data)
-      pg.insert_table(df, 'users', login=login)
-      bot.send_message(message.chat.id, 'Регистрация прошла успешно', parse_mode="Markdown")
+      usrids = pg.query_to_df('select chat_id from users', login=login)
+      usrids = usrids[usrids.columns[0]].values.tolist()
+      if message.chat.id not in usrids:
+        df = pd.DataFrame.from_dict(users_data)
+        pg.insert_table(df, 'users', login=login)
+        bot.send_message(message.chat.id, 'Регистрация прошла успешно', parse_mode="Markdown")
+      else:
+         bot.send_message(message.chat.id, 'Пользователь уже существует', parse_mode="Markdown")
     else:
-      bot.send_message(message.chat.id, 'Апи не корректен', parse_mode="Markdown")
+      bot.send_message(message.chat.id, 'Пароль не корректен', parse_mode="Markdown")
 
 @bot.message_handler(commands=['cnc-start'])
 def sign_handler1(message):
@@ -65,6 +70,8 @@ def sign_handler1(message):
           bot.send_message(message.chat.id, 'Сборщик успешно запущен', parse_mode="Markdown")
       else:
           bot.send_message(message.chat.id, 'Сборщик уже был запущен', parse_mode="Markdown")
+    else:
+       bot.send_message(message.chat.id, 'Пользователь не авторизован', parse_mode="Markdown")
 
        
 
@@ -88,6 +95,8 @@ def sign_handler2(message):
             bot.send_message(message.chat.id, 'Нет запущенных сборщиков', parse_mode="Markdown") 
         except Exception as e:
           return bot.send_message(message.chat.id, 'Остановка не была произведена', parse_mode="Markdown")
+    else:
+       bot.send_message(message.chat.id, 'Пользователь не авторизован', parse_mode="Markdown")
               
 
 @bot.message_handler(commands=['mqtt-start'])
@@ -106,6 +115,8 @@ def sign_handler3(message):
           bot.send_message(message.chat.id, 'Сборщик успешно запущен', parse_mode="Markdown")
       else:
           bot.send_message(message.chat.id, 'Сборщик уже был запущен', parse_mode="Markdown")
+    else:
+       bot.send_message(message.chat.id, 'Пользователь не авторизован', parse_mode="Markdown")
 
 @bot.message_handler(commands=['mqtt-stop'])
 def sign_handler4(message):
@@ -127,6 +138,8 @@ def sign_handler4(message):
             bot.send_message(message.chat.id, 'Нет запущенных сборщиков', parse_mode="Markdown")
         except Exception as e:
           return bot.send_message(message.chat.id, 'Остановка не была произведена', parse_mode="Markdown")
+    else:
+       bot.send_message(message.chat.id, 'Пользователь не авторизован', parse_mode="Markdown")
         
 @bot.message_handler(commands=['opc-start'])
 def sign_handler5(message):
@@ -144,6 +157,8 @@ def sign_handler5(message):
           bot.send_message(message.chat.id, 'Сборщик успешно запущен', parse_mode="Markdown")
       else:
           bot.send_message(message.chat.id, 'Сборщик уже был запущен', parse_mode="Markdown")
+    else:
+       bot.send_message(message.chat.id, 'Пользователь не авторизован', parse_mode="Markdown")
 
 @bot.message_handler(commands=['opc-stop'])
 def sign_handler6(message):
@@ -165,5 +180,29 @@ def sign_handler6(message):
             bot.send_message(message.chat.id, 'Нет запущенных сборщиков', parse_mode="Markdown")
         except Exception as e:
           return bot.send_message(message.chat.id, 'Остановка не была произведена', parse_mode="Markdown")
+    else:
+       bot.send_message(message.chat.id, 'Пользователь не авторизован', parse_mode="Markdown")
+
+
+@bot.message_handler(commands=['started-threads'])
+def sign_handler6(message):
+    global thread_opc
+    global thread_cnc
+    global thread_mqtt
+    usrids = pg.query_to_df('select chat_id from users', login=login)
+    usrids.drop_duplicates()
+    usrids = usrids[usrids.columns[0]].values.tolist()
+    if message.chat.id in usrids:
+      if thread_opc != 1 or thread_cnc !=1 or thread_mqtt !=1:
+        if (thread_opc != 1):
+          bot.send_message(message.chat.id, 'Сборщик opc в работе', parse_mode="Markdown")
+        if (thread_cnc != 1):
+          bot.send_message(message.chat.id, 'Сборщик cnc в работе', parse_mode="Markdown")
+        if (thread_mqtt != 1):
+          bot.send_message(message.chat.id, 'Сборщик mqtt в работе', parse_mode="Markdown")
+      else:
+        bot.send_message(message.chat.id, 'Нет запущенных сборщиков', parse_mode="Markdown")
+    else:
+       bot.send_message(message.chat.id, 'Пользователь не авторизован', parse_mode="Markdown")
 
 bot.infinity_polling()

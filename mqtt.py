@@ -45,6 +45,7 @@ def on_message(client, userdata, msg, list):
             dict_value['demo'] = None
 
 
+
 def init_mqtt():
     client = mqtt.Client()
     client.username_pw_set("admin1","@dm!N")

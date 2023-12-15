@@ -7,6 +7,7 @@ import pg
 from time import sleep
 import json
 from dotenv import load_dotenv
+import notification
 
 load_dotenv()
 
@@ -36,6 +37,7 @@ def get_opc_data(node_list):
 def write_opc_data(node_list):
     nodes_df = get_opc_data(node_list)
     pg.insert_table(nodes_df, 'opc', login=login)
+    return nodes_df
 
 def start_opc(lst):
     while True:
@@ -43,7 +45,15 @@ def start_opc(lst):
         try:
             if(len(lst) > 0):
                 break
-            write_opc_data(node_list)
+            df = write_opc_data(node_list)
+            if(df.size == 0):
+                continue
+            if df.status[df.status != 'Good'].any(axis=None):
+                usrids = pg.query_to_df('select chat_id from users', login=login)
+                usrids.drop_duplicates()
+                usrids = usrids[usrids.columns[0]].values.tolist()
+                for chat_id in usrids:
+                    notification.send_message(chat_id, f"""Есть упавшие ноды в OPC""")
         except Exception as e:
             print(e)
-            print('Mistake on opc')
+            print('Mistake on cnc')

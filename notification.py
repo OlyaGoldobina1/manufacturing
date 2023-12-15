@@ -6,8 +6,6 @@ from dotenv import load_dotenv
 
 load_dotenv()
 TOKEN = os.getenv('TOKEN')
-bot = telebot.TeleBot(TOKEN)
-
 
 def send_message(chat_id, text) -> None:
     method = 'SendMessage'

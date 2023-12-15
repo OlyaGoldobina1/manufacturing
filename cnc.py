@@ -79,7 +79,6 @@ def get_api_data(table):
     return df
 
 def start_cnc(list):
-    sent = False
     while True:
         sleep(10)
         try:
@@ -89,19 +88,17 @@ def start_cnc(list):
                 break
             if(df.size == 0):
                 continue
-            row = df[df['param_name'] == 'Статус канала'].iloc[0]
+            row = df[df['param_name'] == 'Статус канала']
             status = row.get('param_val_str')
-            if not sent and status == 'Ошибка':
+            if row.param_val_str[row.param_val_str == 'Ошибка'].any(axis=None):
                 entity = row.get('entity')
                 param = row.get('param_name')
-                machine = row.get('URL')
-                sent = True
+                machine = row.get('url')
                 usrids = pg.query_to_df('select chat_id from users', login=login)
                 usrids.drop_duplicates()
+                usrids = usrids[usrids.columns[0]].values.tolist()
                 for chat_id in usrids:
-                    notification.send_message(chat_id, f"""<b>{machine}</b>
-    {entity} -> {param} -> {status} ❌""")
-            sent = status == 'Ошибка'
+                    notification.send_message(chat_id, f"""Есть ошибки в работе канала CNC""")
         except Exception as e:
             print(e)
             print('Mistake on cnc')

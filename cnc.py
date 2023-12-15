@@ -90,7 +90,7 @@ def start_cnc(list):
                 continue
             row = df[df['param_name'] == 'Статус канала']
             if row.param_val_str[row.param_val_str == 'Ошибка'].any(axis=None):
-                row.apply(lambda x: notification.send_message(f"""{x.get('url')} {x.get('entity')} -> {x.get('param_name')} -> {x.get('param_val_str')} X"""), axis = 1)
+                row[row.param_val_str == 'Ошибка'].apply(lambda x: notification.send_message(f"""Машина {x.get('url')}, {x.get('entity')} упала с {x.get('param_name')} - {x.get('param_val_str')} """), axis = 1)
         except Exception as e:
             print(e)
             print('Mistake on cnc')

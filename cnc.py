@@ -7,9 +7,12 @@ from time import sleep
 import pandas as pd
 import pg
 import notification
+from dotenv import load_dotenv
 
-cnc_data = [os.environ['cnc_api_3'], os.environ['cnc_api_5']]
-login = json.loads(os.environ['db_login'])
+load_dotenv()
+
+cnc_data = [os.getenv('cnc_api_3'), os.getenv('cnc_api_5')]
+login = json.loads(os.getenv('db_login'))
 def param_val_to_float(val):
     val = str(val)
     result = re.sub('[^\d,-\.]', '', val).replace(',', '.')

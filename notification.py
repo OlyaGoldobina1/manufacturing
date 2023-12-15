@@ -2,8 +2,10 @@ import telebot
 from telebot import types
 import requests
 import os
+from dotenv import load_dotenv
 
-TOKEN = os.environ['TOKEN']
+load_dotenv()
+TOKEN = os.getenv('TOKEN')
 bot = telebot.TeleBot(TOKEN)
 
 

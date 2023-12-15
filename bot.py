@@ -10,10 +10,14 @@ from opc import start_opc
 import pg
 import json
 
-TOKEN = os.environ.get('TOKEN')
+from dotenv import load_dotenv
+
+load_dotenv()
+
+TOKEN = os.getenv('TOKEN')
 bot = telebot.TeleBot(TOKEN)
-login_str = os.environ['db_login']
-login = json.loads(os.environ['db_login'])
+login_str = os.getenv('db_login')
+login = json.loads(os.getenv('db_login'))
 
 def start_cnc_2():
    global thread_cnc_list
@@ -30,17 +34,10 @@ def start_opc_2():
    global thread_opc
    start_opc(thread_opc_list)
 
-thread_cnc_list = []
-thread_cnc = Thread(target=start_cnc_2)
-thread_cnc.start()
 
-thread_mqtt_list = []
-thread_mqtt = Thread(target=start_mqtt_2)
-thread_mqtt.start()
-
-thread_opc_list = []
-thread_opc = Thread(target=start_opc_2)
-thread_opc.start()
+thread_cnc = 1
+thread_mqtt = 1
+thread_opc = 1
 
 @bot.message_handler(commands=['reg'])
 def sign_handler(message):
@@ -83,7 +80,7 @@ def sign_handler2(message):
           if(thread_cnc != 1):
             l_thread = thread_cnc
             thread_cnc_list.append("Very special string")
-            bot.send_message(message.chat.id, 'Сборщик успешно попущен', parse_mode="Markdown")
+            bot.send_message(message.chat.id, 'Сборщик успешно остановлен', parse_mode="Markdown")
             l_thread.join()
 
             thread_cnc = 1
@@ -122,7 +119,7 @@ def sign_handler4(message):
           if(thread_mqtt != 1):
             l_thread = thread_mqtt
             thread_mqtt_list.append("Very special string")
-            bot.send_message(message.chat.id, 'Сборщик успешно попущен', parse_mode="Markdown")
+            bot.send_message(message.chat.id, 'Сборщик успешно остановлен', parse_mode="Markdown")
             l_thread.join()
 
             thread_mqtt = 1
@@ -160,7 +157,7 @@ def sign_handler6(message):
           if(thread_opc != 1):
             l_thread = thread_opc
             thread_opc_list.append("Very special string")
-            bot.send_message(message.chat.id, 'Сборщик успешно попущен', parse_mode="Markdown")
+            bot.send_message(message.chat.id, 'Сборщик успешно остановлен', parse_mode="Markdown")
             l_thread.join()
 
             thread_opc = 1

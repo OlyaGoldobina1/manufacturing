@@ -1,12 +1,14 @@
 import paho.mqtt.client as mqtt
 import datetime
-import pandas
 import pg
 import pandas as pd
 import os
 import json
+from dotenv import load_dotenv
 
-login = json.loads(os.environ['db_login'])
+load_dotenv()
+
+login = json.loads(os.getenv('db_login'))
 
 def on_message(client, userdata, msg, list):
     if(len(list) > 0):

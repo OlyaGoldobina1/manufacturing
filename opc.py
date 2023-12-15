@@ -6,12 +6,14 @@ import pandas as pd
 import pg
 from time import sleep
 import json
+from dotenv import load_dotenv
 
+load_dotenv()
 
-client = Client(os.environ['opc_server'])
-ape_data = os.environ['api_data']
-node_list = eval(os.environ['api_data'])
-login = json.loads(os.environ['db_login'])
+client = Client(os.getenv('opc_server'))
+ape_data = os.getenv('api_data')
+node_list = eval(os.getenv('api_data'))
+login = json.loads(os.getenv('db_login'))
 prev = ''
 
 def get_opc_data(node_list):

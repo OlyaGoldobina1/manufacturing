@@ -205,4 +205,24 @@ def sign_handler6(message):
     else:
        bot.send_message(message.chat.id, 'Пользователь не авторизован', parse_mode="Markdown")
 
+@bot.message_handler(commands=['help'])
+def sign_handler6(message):
+    usrids = pg.query_to_df('select chat_id from users', login=login)
+    usrids.drop_duplicates()
+    usrids = usrids[usrids.columns[0]].values.tolist()
+    if message.chat.id in usrids:
+       Text = 'Доступные комманды: \n'\
+              '/reg [пароль] - Регистрация в боте\n'\
+              '/cnc-start - Старт cnc сборщика\n'\
+              '/cnc-stop - Остановка cnc сборщика\n'\
+              '/opc-start - Старт opc сборщика\n'\
+              '/opc-stop - Остановка opc сборщика\n'\
+              '/mqtt-start - Старт mqtt сборщика\n'\
+              '/mqtt-stop - Остановка mqtt сборщика\n'\
+              '/started-threads - Статус по сборщикам'
+       bot.send_message(message.chat.id, Text, parse_mode="Markdown")
+    else:
+       Text = 'Доступные комманды: \n'\
+              '/reg [пароль] - Регистрация в боте'
+       bot.send_message(message.chat.id, Text, parse_mode="Markdown")
 bot.infinity_polling()

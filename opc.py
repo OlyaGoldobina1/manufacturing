@@ -49,11 +49,7 @@ def start_opc(lst):
             if(df.size == 0):
                 continue
             if df.status[df.status != 'Good'].any(axis=None):
-                usrids = pg.query_to_df('select chat_id from users', login=login)
-                usrids.drop_duplicates()
-                usrids = usrids[usrids.columns[0]].values.tolist()
-                for chat_id in usrids:
-                    notification.send_message(chat_id, f"""Есть упавшие ноды в OPC""")
+                df.apply(lambda x: notification.send_message(f"""OPC {x.node_id} is dropped with status: {x.status}"""), axis = 1)
         except Exception as e:
             print(e)
             print('Mistake on cnc')

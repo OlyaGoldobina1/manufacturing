@@ -89,16 +89,8 @@ def start_cnc(list):
             if(df.size == 0):
                 continue
             row = df[df['param_name'] == 'Статус канала']
-            status = row.get('param_val_str')
             if row.param_val_str[row.param_val_str == 'Ошибка'].any(axis=None):
-                entity = row.get('entity')
-                param = row.get('param_name')
-                machine = row.get('url')
-                usrids = pg.query_to_df('select chat_id from users', login=login)
-                usrids.drop_duplicates()
-                usrids = usrids[usrids.columns[0]].values.tolist()
-                for chat_id in usrids:
-                    notification.send_message(chat_id, f"""Есть ошибки в работе канала CNC""")
+                row.apply(lambda x: notification.send_message(f"""{x.get('url')} {x.get('entity')} -> {x.get('param_name')} -> {x.get('param_val_str')} X"""), axis = 1)
         except Exception as e:
             print(e)
             print('Mistake on cnc')

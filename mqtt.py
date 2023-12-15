@@ -7,7 +7,7 @@ import json
 from dotenv import load_dotenv
 
 load_dotenv()
-
+dict_value = {}
 login = json.loads(os.getenv('db_login'))
 
 def on_message(client, userdata, msg, list):
@@ -17,14 +17,26 @@ def on_message(client, userdata, msg, list):
     mqtt_source, mqtt_value = msg.topic.split("/")
     time = datetime.datetime.now()
     if mqtt_source == "sens":
-        mqtt_data = {"topic": [mqtt_value[0]], "value": [msg.payload.decode()], "timestamp": [time],\
-                     "source": "real"}
+        if mqtt_value[0] == 't':
+            dict_value['real'] = {"topic": [mqtt_value[0]], "hem": None, "temp": [msg.payload.decode()], "timestamp": None,\
+                         "source": "real"}
+        elif mqtt_value[0] == 'h':
+            dict_value['real']["hem"] = [msg.payload.decode()]
     else:
         if mqtt_source == "sensor":
-            mqtt_data = {"topic": [mqtt_value[0]], "value": [msg.payload.decode()], "timestamp": [time],\
-                     "source": "demo"}
-    df = pd.DataFrame(mqtt_data)
-    pg.insert_table(df, 'mqtt', login=login)
+            if mqtt_value[0] == 't':
+                dict_value['demo'] = {"topic": [mqtt_value[0]], "hem": None, "temp": [msg.payload.decode()], "timestamp": None,\
+                            "source": "demo"}
+            elif mqtt_value[0] == 'h':
+                dict_value['demo']["hem"] = [msg.payload.decode()]
+    if dict_value['real']['hem'] is not None and dict_value['real']['temp'] is not None:
+        dict_value['real']['timestamp'] = [time]
+        df = pd.DataFrame(dict_value['real'])
+        pg.insert_table(df, 'mqtt', login=login)
+    elif dict_value['demo']['hem'] is not None and dict_value['demo']['temp'] is not None:
+        dict_value['demo']['timestamp'] = [time]
+        df = pd.DataFrame(dict_value['demo']) 
+        pg.insert_table(df, 'mqtt', login=login)
 
 
 def init_mqtt():

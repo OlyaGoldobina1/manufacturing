@@ -2,9 +2,13 @@ import pandas as pd
 import psycopg2
 import psycopg2.extras as extras
 import io
+import json
+import os
+
+login = json.loads(os.getenv('db_login'))
 
 
-def insert_table(df, table, login):
+def insert_table(df, table):
 
     conn = psycopg2.connect(**login)
     conn.autocommit = False
@@ -24,7 +28,7 @@ def insert_table(df, table, login):
     conn.close()
 
 
-def query_to_df(query, login):
+def query_to_df(query):
 
     conn = psycopg2.connect(**login)
     conn.autocommit = False

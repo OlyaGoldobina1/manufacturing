@@ -5,13 +5,12 @@ import pandas as pd
 import os
 import json
 from dotenv import load_dotenv
+import notification
 
 load_dotenv()
 dict_value = {}
-login = json.loads(os.getenv('db_login'))
 
 def on_message(client, userdata, msg, list):
-    global dict_value
     global dict_value
     if(len(list) > 0):
         client.disconnect()
@@ -35,13 +34,21 @@ def on_message(client, userdata, msg, list):
         if dict_value['real']['hem'] is not None and dict_value['real']['temp'] is not None:
             dict_value['real']['timestamp'] = [time]
             df = pd.DataFrame(dict_value['real'])
-            pg.insert_table(df, 'mqtt', login=login)
+            pg.insert_table(df, 'mqtt')
+            if int(dict_value['real']['hem'][0]) > 70:
+                notification.send_message(f"""MQTT Машина {dict_value['real']['source'][0]} имеет влажность {dict_value['real']['hem'][0]}""")
+            if int(dict_value['real']['temp'][0]) > 30:
+                notification.send_message(f"""MQTT Машина {dict_value['real']['source'][0]} имеет температуру {dict_value['real']['temp'][0]}""")
             dict_value['real'] = None
     if dict_value.get('demo') is not None:
         if dict_value['demo']['hem'] is not None and dict_value['demo']['temp'] is not None:
             dict_value['demo']['timestamp'] = [time]
             df = pd.DataFrame(dict_value['demo']) 
-            pg.insert_table(df, 'mqtt', login=login)
+            pg.insert_table(df, 'mqtt')
+            # if int(dict_value['demo']['hem'][0]) > 70:
+            #     notification.send_message(f"""MQTT Машина {dict_value['demo']['source'][0]} имеет влажность {dict_value['demo']['hem'][0]}""")
+            # if int(dict_value['demo']['temp'][0]) > 30:
+            #     notification.send_message(f"""MQTT Машина {dict_value['demo']['source'][0]} имеет температуру {dict_value['demo']['temp'][0]}""")
             dict_value['demo'] = None
 
 
@@ -62,5 +69,12 @@ def mqtt_loop(client, list):
 
 
 def start_mqtt(list):
-    mqtt_client = init_mqtt()
-    mqtt_loop(mqtt_client, list)
+    while True:
+        try:
+            if(len(list) > 0):
+                break
+            mqtt_client = init_mqtt()
+            mqtt_loop(mqtt_client, list)
+        except Exception as e:
+            print(e)
+            print('Mistake on mqtt')

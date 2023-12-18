@@ -16,8 +16,6 @@ load_dotenv()
 
 TOKEN = os.getenv('TOKEN')
 bot = telebot.TeleBot(TOKEN)
-login_str = os.getenv('db_login')
-login = json.loads(os.getenv('db_login'))
 
 def start_cnc_2():
    global thread_cnc_list
@@ -44,11 +42,11 @@ def sign_handler(message):
     global thread_cnc
     if message.text.replace('/reg ', '') ==  os.getenv("tg_password"):
       users_data = {"chat_id": [message.chat.id], "user_id": [message.from_user.id], "username": [message.from_user.username], "user_first_name": [message.from_user.first_name], "user_last_name": [message.from_user.last_name]}
-      usrids = pg.query_to_df('select chat_id from users', login=login)
+      usrids = pg.query_to_df('select chat_id from users')
       usrids = usrids[usrids.columns[0]].values.tolist()
       if message.chat.id not in usrids:
         df = pd.DataFrame.from_dict(users_data)
-        pg.insert_table(df, 'users', login=login)
+        pg.insert_table(df, 'users')
         bot.send_message(message.chat.id, 'Регистрация прошла успешно', parse_mode="Markdown")
       else:
          bot.send_message(message.chat.id, 'Пользователь уже существует', parse_mode="Markdown")
@@ -59,7 +57,7 @@ def sign_handler(message):
 def sign_handler1(message):
     global thread_cnc
     global thread_cnc_list
-    usrids = pg.query_to_df('select chat_id from users', login=login)
+    usrids = pg.query_to_df('select chat_id from users')
     usrids.drop_duplicates()
     usrids = usrids[usrids.columns[0]].values.tolist()
     if message.chat.id in usrids:
@@ -79,7 +77,7 @@ def sign_handler1(message):
 def sign_handler2(message):
     global thread_cnc
     global thread_cnc_list
-    usrids = pg.query_to_df('select chat_id from users', login=login)
+    usrids = pg.query_to_df('select chat_id from users')
     usrids.drop_duplicates()
     usrids = usrids[usrids.columns[0]].values.tolist()
     if message.chat.id in usrids:
@@ -103,7 +101,7 @@ def sign_handler2(message):
 def sign_handler3(message):
     global thread_mqtt_list
     global thread_mqtt
-    usrids = pg.query_to_df('select chat_id from users', login=login)
+    usrids = pg.query_to_df('select chat_id from users')
     usrids.drop_duplicates()
     usrids = usrids[usrids.columns[0]].values.tolist()
     if message.chat.id in usrids:
@@ -122,7 +120,7 @@ def sign_handler3(message):
 def sign_handler4(message):
     global thread_mqtt_list
     global thread_mqtt
-    usrids = pg.query_to_df('select chat_id from users', login=login)
+    usrids = pg.query_to_df('select chat_id from users')
     usrids.drop_duplicates()
     usrids = usrids[usrids.columns[0]].values.tolist()
     if message.chat.id in usrids:
@@ -145,7 +143,7 @@ def sign_handler4(message):
 def sign_handler5(message):
     global thread_opc
     global thread_opc_list
-    usrids = pg.query_to_df('select chat_id from users', login=login)
+    usrids = pg.query_to_df('select chat_id from users')
     usrids.drop_duplicates()
     usrids = usrids[usrids.columns[0]].values.tolist()
     if message.chat.id in usrids:
@@ -164,7 +162,7 @@ def sign_handler5(message):
 def sign_handler6(message):
     global thread_opc
     global thread_opc_list
-    usrids = pg.query_to_df('select chat_id from users', login=login)
+    usrids = pg.query_to_df('select chat_id from users')
     usrids.drop_duplicates()
     usrids = usrids[usrids.columns[0]].values.tolist()
     if message.chat.id in usrids:
@@ -189,7 +187,7 @@ def sign_handler6(message):
     global thread_opc
     global thread_cnc
     global thread_mqtt
-    usrids = pg.query_to_df('select chat_id from users', login=login)
+    usrids = pg.query_to_df('select chat_id from users')
     usrids.drop_duplicates()
     usrids = usrids[usrids.columns[0]].values.tolist()
     if message.chat.id in usrids:
@@ -207,7 +205,7 @@ def sign_handler6(message):
 
 @bot.message_handler(commands=['help'])
 def sign_handler6(message):
-    usrids = pg.query_to_df('select chat_id from users', login=login)
+    usrids = pg.query_to_df('select chat_id from users')
     usrids.drop_duplicates()
     usrids = usrids[usrids.columns[0]].values.tolist()
     if message.chat.id in usrids:

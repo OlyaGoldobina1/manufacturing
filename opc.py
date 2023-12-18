@@ -14,7 +14,6 @@ load_dotenv()
 client = Client(os.getenv('opc_server'))
 ape_data = os.getenv('api_data')
 node_list = eval(os.getenv('api_data'))
-login = json.loads(os.getenv('db_login'))
 prev = ''
 
 def get_opc_data(node_list):
@@ -36,7 +35,7 @@ def get_opc_data(node_list):
 
 def write_opc_data(node_list):
     nodes_df = get_opc_data(node_list)
-    pg.insert_table(nodes_df, 'opc', login=login)
+    pg.insert_table(nodes_df, 'opc')
     return nodes_df
 
 def start_opc(lst):

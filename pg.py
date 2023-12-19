@@ -4,7 +4,9 @@ import psycopg2.extras as extras
 import io
 import json
 import os
+from dotenv import load_dotenv
 
+load_dotenv()
 login = json.loads(os.getenv('db_login'))
 
 

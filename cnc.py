@@ -63,7 +63,7 @@ def start_cnc(list):
                 continue
 
             for _, row in df[df['param_name'] == 'Статус канала'].iterrows():
-                if row.get('param_val_str') in ['Ошибка', 'Останов'] and error.get(row.get('url')+row.get('entity')) is None:
+                if (row.get('param_val_str') in ['Ошибка'] or row.get('param_val_str') is None) and error.get(row.get('url')+row.get('entity')) is None:
                     notification.send_message(f"""CNC Машина {row.get('url')}, {row.get('entity')} вышла из работы с {row.get('param_name')} - {row.get('param_val_str')} """)
                     error[row.get('url')+row.get('entity')] = True
                 elif row.get('param_val_str') == 'Работа' and error.get(row.get('url')+row.get('entity')) == True:
